@@ -4,8 +4,8 @@ name: redmi ax6 build
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '33 5 * * 1,4'  # 每周一 周四
+  # schedule:
+  #   - cron: '33 5 * * 1,4'  # 每周一 周四
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
