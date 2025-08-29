@@ -1,0 +1,102 @@
+# This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
+# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+name: redmi ax6 build
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '33 5 * * 1,4'  # 每周一 周四
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+#    - name: Checkout repository
+#      uses: actions/checkout@v4
+
+    - name: Checkout Qosmio NSS
+      uses: actions/checkout@v4
+      with:
+        repository: qosmio/openwrt-ipq
+        ref: 24.10-nss
+
+
+    - name: Set up timezone to China Standard Time
+      run: echo "TZ=Asia/Shanghai" >> $GITHUB_ENV
+
+    - name: Add argon theme
+      run:  |
+            cd package
+            git clone https://github.com/jerrykuku/luci-theme-argon.git
+            git clone https://github.com/jerrykuku/luci-app-argon-config.git 
+            cd ..
+    - name: Update feeds
+      run: ./scripts/feeds update
+
+    - name: Install feeds
+      run: ./scripts/feeds install -a
+
+    - name: Copy NSS config
+      run: cp nss-setup/config-nss.seed .config
+      
+    - name: disable bootstrap default theme
+      run: sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
+
+    - name: modify nss config, disable some packages
+      run : sed -i 
+            -e 's/# CONFIG_TARGET_qualcommax_ipq807x_DEVICE_redmi_ax6 is not set/CONFIG_TARGET_qualcommax_ipq807x_DEVICE_redmi_ax6=y/g'
+            -e 's/CONFIG_PACKAGE_sqm-scripts-nss=y/CONFIG_PACKAGE_sqm-scripts-nss=n/g'
+            -e 's/CONFIG_PACKAGE_luci-app-sqm=y/CONFIG_PACKAGE_luci-app-sqm=n/g'
+            -e 's/CONFIG_PACKAGE_luci-app-statistics=y/CONFIG_PACKAGE_luci-app-statistics=n/g'
+            -e 's/CONFIG_PACKAGE_luci-app-acme=y/CONFIG_PACKAGE_luci-app-acme=n/g'
+            -e 's/CONFIG_PACKAGE_luci-app-watchcat=y/CONFIG_PACKAGE_luci-app-watchcat=n/g'
+            -e 's/CONFIG_PACKAGE_luci-proto-wireguard=y/CONFIG_PACKAGE_luci-proto-wireguard=n/g'
+            -e 's/CONFIG_PACKAGE_luci-app-nlbwmon=y/CONFIG_PACKAGE_luci-app-nlbwmon=n/g'
+            -e 's/CONFIG_PACKAGE_kmod-fs-vfat=y/CONFIG_PACKAGE_kmod-fs-vfat=n/g'
+            -e 's/CONFIG_PACKAGE_kmod-fs-ntfs3=y/CONFIG_PACKAGE_kmod-fs-ntfs3=n/g'
+            -e 's/CONFIG_PACKAGE_kmod-nft-bridge=y/CONFIG_PACKAGE_kmod-nft-bridge=n/g'
+            -e 's/CONFIG_PACKAGE_kmod-usb-storage=y/CONFIG_PACKAGE_kmod-usb-storage=n/g'
+            -e 's/CONFIG_PACKAGE_kmod-ramoops=y/CONFIG_PACKAGE_kmod-ramoops=n/g'
+            -e 's/CONFIG_PACKAGE_rsync=y/CONFIG_PACKAGE_rsync=n/g'
+            -e 's/CONFIG_PACKAGE_jq=y/CONFIG_PACKAGE_jq=n/g'
+            -e 's/CONFIG_PACKAGE_pigz=y/CONFIG_PACKAGE_pigz=n/g'
+            -e 's/CONFIG_PACKAGE_tar=y/CONFIG_PACKAGE_tar=n/g'
+            -e 's/CONFIG_PACKAGE_tcpdump=y/CONFIG_PACKAGE_tcpdump=n/g'
+            -e '$a\CONFIG_PACKAGE_kmod-usb-core=n'
+            -e '$a\CONFIG_PACKAGE_kmod-usb-dwc3=n'
+            -e '$a\CONFIG_PACKAGE_kmod-usb-dwc3-qcom=n'
+            -e '$a\CONFIG_PACKAGE_kmod-usb-xhci-hcd=n'
+            -e '$a\CONFIG_PACKAGE_kmod-usb3=n' 
+            -e '$a\CONFIG_PACKAGE_luci-theme-argon=y'
+            -e '$a\CONFIG_PACKAGE_luci-app-argon-config=y'
+            -e '$a\CONFIG_ATH11K_MEM_PROFILE_1G=n'
+            -e '$a\CONFIG_ATH11K_MEM_PROFILE_512M=y'
+            .config
+            # -e '$a\CONFIG_PACKAGE_adguardhome=y'
+    - name: Make defconfig
+      run: make defconfig V=s
+      
+    - name: Print initial config we are using
+      run: cat .config
+
+    - name: Download sources
+      run: make download -j$(nproc) V=s
+
+    - name: Build OpenWrt
+      run: make -j$(nproc) V=s
+
+    - name: Get the current date
+      run: echo "NOW=$(date +'%Y年%m月%d日%H时%M分')" >> $GITHUB_ENV
+
+    - name: Create a release
+      uses: "ncipollo/release-action@v1"
+      with:
+        makeLatest: true
+        tag: "Redmi-AX6-NSS-WiFi-${{ env.NOW }}"
+        artifacts: bin/targets/qualcommax/ipq807x/*
+
