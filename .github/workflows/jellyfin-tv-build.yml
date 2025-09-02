@@ -27,7 +27,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Set JELLYFIN_VERSION
-        run: echo "JELLYFIN_VERSION=$(echo ${GITHUB_REF#refs/tags/v} | tr / -)" >> $GITHUB_ENV
+        # run: echo "JELLYFIN_VERSION=$(echo ${GITHUB_REF#refs/tags/v} | tr / -)" >> $GITHUB_ENV
+        run: echo "JELLYFIN_VERSION=slamdunk" >> $GITHUB_ENV
 
       - name: Assemble release files
         run: ./gradlew assemble bundleRelease versionTxt
