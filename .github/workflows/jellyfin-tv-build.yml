@@ -29,8 +29,7 @@ jobs:
       - name: Set JELLYFIN_VERSION
         # run: echo "JELLYFIN_VERSION=$(echo ${GITHUB_REF#refs/tags/v} | tr / -)" >> $GITHUB_ENV
         run: |
-            echo "JELLYFIN_VERSION=0.19.0" >> $GITHUB_ENV  
-            echo "${{ secrets.KEYSTORE}}" 
+            echo "JELLYFIN_VERSION=0.19.0" >> $GITHUB_ENV 
         
 
       - name: Assemble release files
@@ -53,9 +52,7 @@ jobs:
         run: |
           mkdir -p build/jellyfin-publish
           mv app/build/outputs/apk/*/jellyfin-androidtv-*-debug.apk build/jellyfin-publish/
-          mv app/build/outputs/apk/*/jellyfin-androidtv-*-release-unsigned.apk build/jellyfin-publish/
           mv ${{ steps.signApk.outputs.signedReleaseFile }} build/jellyfin-publish/jellyfin-androidtv-v${{ env.JELLYFIN_VERSION }}-release.apk
-          mv ${{ steps.signAab.outputs.signedReleaseFile }} build/jellyfin-publish/jellyfin-androidtv-v${{ env.JELLYFIN_VERSION }}-release.aab
           mv app/build/version.txt build/jellyfin-publish/
       
 
@@ -64,7 +61,7 @@ jobs:
         with:
           makeLatest: true
           allowUpdates: true
-          tag: "jellytv"
+          tag: "jellyfin-tv"
           artifacts: build/jellyfin-publish/*
 
 
