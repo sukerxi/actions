@@ -82,7 +82,7 @@ jobs:
         with:
           makeLatest: true
           allowUpdates: true
-          tag: "hiphop"
+          tag: "jellytv"
           artifacts: build/jellyfin-publish/*
 
 
