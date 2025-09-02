@@ -39,8 +39,6 @@ jobs:
       - name: Sign APK
         id: signApk
         uses: r0adkll/sign-android-release@v1 # tag=v1
-        env:
-          BUILD_TOOLS_VERSION: "34.0.0"
         with:
           releaseDirectory: app/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.KEYSTORE }}
@@ -51,8 +49,6 @@ jobs:
       - name: Sign app bundle
         id: signAab
         uses: r0adkll/sign-android-release@v1 
-        env:
-          BUILD_TOOLS_VERSION: "34.0.0"
         with:
           releaseDirectory: app/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.KEYSTORE }}
@@ -69,9 +65,22 @@ jobs:
           mv ${{ steps.signAab.outputs.signedReleaseFile }} build/jellyfin-publish/jellyfin-androidtv-v${{ env.JELLYFIN_VERSION }}-release.aab
           mv app/build/version.txt build/jellyfin-publish/
       
-      - name: Upload release archive to GitHub release
-        uses: alexellis/upload-assets@0.4.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.JF_BOT_TOKEN }}
+      # - name: Upload release archive to GitHub release
+      #   uses: alexellis/upload-assets@0.4.1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.JF_BOT_TOKEN }}
+      #   with:
+      #     asset_paths: '["build/jellyfin-publish/*"]'
+
+
+      - name: Create a release
+        uses: "ncipollo/release-action@v1"
         with:
-          asset_paths: '["build/jellyfin-publish/*"]'
+          makeLatest: true
+          allowUpdates: true
+          tag: "hiphop"
+          artifacts: build/jellyfin-publish/*
+
+
+
+          
