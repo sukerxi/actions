@@ -28,7 +28,7 @@ jobs:
 
       - name: Set JELLYFIN_VERSION
         # run: echo "JELLYFIN_VERSION=$(echo ${GITHUB_REF#refs/tags/v} | tr / -)" >> $GITHUB_ENV
-        run: echo "JELLYFIN_VERSION=0.0.0-slamdunk.1" >> $GITHUB_ENV
+        run: echo "JELLYFIN_VERSION=0.19.0" >> $GITHUB_ENV
 
       - name: Assemble release files
         run: ./gradlew assemble bundleRelease versionTxt
