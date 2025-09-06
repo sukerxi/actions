@@ -50,8 +50,6 @@ jobs:
     - name: modify nss config, disable some packages
       run : sed -i 
             -e 's/# CONFIG_TARGET_qualcommax_ipq807x_DEVICE_redmi_ax6 is not set/CONFIG_TARGET_qualcommax_ipq807x_DEVICE_redmi_ax6=y/g'
-            -e 's/CONFIG_PACKAGE_sqm-scripts-nss=y/CONFIG_PACKAGE_sqm-scripts-nss=n/g'
-            -e 's/CONFIG_PACKAGE_luci-app-sqm=y/CONFIG_PACKAGE_luci-app-sqm=n/g'
             -e 's/CONFIG_PACKAGE_luci-app-statistics=y/CONFIG_PACKAGE_luci-app-statistics=n/g'
             -e 's/CONFIG_PACKAGE_luci-app-acme=y/CONFIG_PACKAGE_luci-app-acme=n/g'
             -e 's/CONFIG_PACKAGE_luci-app-watchcat=y/CONFIG_PACKAGE_luci-app-watchcat=n/g'
@@ -78,6 +76,8 @@ jobs:
             -e '$a\CONFIG_ATH11K_MEM_PROFILE_512M=y'
             .config
             # -e '$a\CONFIG_PACKAGE_adguardhome=y'
+            # -e 's/CONFIG_PACKAGE_sqm-scripts-nss=y/CONFIG_PACKAGE_sqm-scripts-nss=n/g'
+            # -e 's/CONFIG_PACKAGE_luci-app-sqm=y/CONFIG_PACKAGE_luci-app-sqm=n/g'
     - name: Make defconfig
       run: make defconfig V=s
       
