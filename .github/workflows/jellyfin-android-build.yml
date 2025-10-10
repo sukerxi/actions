@@ -50,7 +50,7 @@ jobs:
       - name: Prepare release archive
         run: |
           mkdir -p build/jellyfin-publish
-          mv app/build/outputs/apk/*/*/jellyfin-android-*-libre-debug.apk build/jellyfin-publish/
+          # mv app/build/outputs/apk/*/*/jellyfin-android-*-libre-debug.apk build/jellyfin-publish/
           mv ${{ steps.libreSign.outputs.signedReleaseFile }} build/jellyfin-publish/jellyfin-android-v${{ env.JELLYFIN_VERSION }}-libre-release.apk
           mv app/build/version.txt build/jellyfin-publish/
    
