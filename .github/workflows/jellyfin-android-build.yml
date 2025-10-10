@@ -32,7 +32,8 @@ jobs:
             echo "JELLYFIN_VERSION=3.0.0" >> $GITHUB_ENV 
 
       - name: Assemble release files
-        run: ./gradlew assemble bundleProprietaryRelease versionTxt
+        # run: ./gradlew assemble bundleProprietaryRelease versionTxt
+        run: ./gradlew assembleLibreRelease versionTxt
 
       - name: Sign libre APK
         id: libreSign
