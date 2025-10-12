@@ -29,12 +29,12 @@ jobs:
     - name: Set up timezone to China Standard Time
       run: echo "TZ=Asia/Shanghai" >> $GITHUB_ENV
 
-    - name: Add argon theme
-      run:  |
-            cd package
-            git clone https://github.com/jerrykuku/luci-theme-argon.git
-            git clone https://github.com/jerrykuku/luci-app-argon-config.git 
-            cd ..
+    # - name: Add argon theme
+    #   run:  |
+    #         cd package
+    #         git clone https://github.com/jerrykuku/luci-theme-argon.git
+    #         git clone https://github.com/jerrykuku/luci-app-argon-config.git 
+    #         cd ..
     - name: Update feeds
       run: ./scripts/feeds update
 
@@ -44,8 +44,8 @@ jobs:
     - name: Copy NSS config
       run: cp nss-setup/config-nss.seed .config
       
-    - name: disable bootstrap default theme
-      run: sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
+    # - name: disable bootstrap default theme
+    #   run: sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
     - name: modify nss config, disable some packages
       run : sed -i 
@@ -65,19 +65,26 @@ jobs:
             -e 's/CONFIG_PACKAGE_pigz=y/CONFIG_PACKAGE_pigz=n/g'
             -e 's/CONFIG_PACKAGE_tar=y/CONFIG_PACKAGE_tar=n/g'
             -e 's/CONFIG_PACKAGE_tcpdump=y/CONFIG_PACKAGE_tcpdump=n/g'
-            -e '$a\CONFIG_PACKAGE_kmod-usb-core=n'
-            -e '$a\CONFIG_PACKAGE_kmod-usb-dwc3=n'
-            -e '$a\CONFIG_PACKAGE_kmod-usb-dwc3-qcom=n'
-            -e '$a\CONFIG_PACKAGE_kmod-usb-xhci-hcd=n'
-            -e '$a\CONFIG_PACKAGE_kmod-usb3=n' 
-            -e '$a\CONFIG_PACKAGE_luci-theme-argon=y'
-            -e '$a\CONFIG_PACKAGE_luci-app-argon-config=y'
+            -e 's/CONFIG_PACKAGE_sqm-scripts-nss=y/CONFIG_PACKAGE_sqm-scripts-nss=n/g'
+            -e 's/CONFIG_PACKAGE_luci-app-sqm=y/CONFIG_PACKAGE_luci-app-sqm=n/g'
+            -e 's/CONFIG_PACKAGE_htop=y/CONFIG_PACKAGE_htop=n/g'
+            -e 's/CONFIG_PACKAGE_tcpdump=y/CONFIG_PACKAGE_tcpdump=n/g'
+            -e 's/CONFIG_PACKAGE_kmod-fs-vfat=y/CONFIG_PACKAGE_kmod-fs-vfat=n/g'
+            -e 's/CONFIG_PACKAGE_kmod-fs-ntfs3=y/CONFIG_PACKAGE_kmod-fs-ntfs3=n/g'
+            -e 's/CONFIG_PACKAGE_kmod-nft-bridge=y/CONFIG_PACKAGE_kmod-nft-bridge=n/g'
+            -e 's/CONFIG_PACKAGE_kmod-usb-storage=y/CONFIG_PACKAGE_kmod-usb-storage=n/g'
             -e '$a\CONFIG_ATH11K_MEM_PROFILE_1G=n'
             -e '$a\CONFIG_ATH11K_MEM_PROFILE_512M=y'
             .config
+            # -e '$a\CONFIG_PACKAGE_luci-theme-argon=y'
+            # -e '$a\CONFIG_PACKAGE_luci-app-argon-config=y'
             # -e '$a\CONFIG_PACKAGE_adguardhome=y'
-            # -e 's/CONFIG_PACKAGE_sqm-scripts-nss=y/CONFIG_PACKAGE_sqm-scripts-nss=n/g'
-            # -e 's/CONFIG_PACKAGE_luci-app-sqm=y/CONFIG_PACKAGE_luci-app-sqm=n/g'
+            # -e '$a\CONFIG_PACKAGE_kmod-usb-core=n'
+            # -e '$a\CONFIG_PACKAGE_kmod-usb-dwc3=n'
+            # -e '$a\CONFIG_PACKAGE_kmod-usb-dwc3-qcom=n'
+            # -e '$a\CONFIG_PACKAGE_kmod-usb-xhci-hcd=n'
+            # -e '$a\CONFIG_PACKAGE_kmod-usb3=n' 
+
     - name: Make defconfig
       run: make defconfig V=s
       
