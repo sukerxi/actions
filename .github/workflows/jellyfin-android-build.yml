@@ -1,8 +1,8 @@
 name: jellyfin-android build
 
 on:
-  workflow_dispatch:
-  
+  push:
+    branches: [ main ] 
 # permissions:
 #   contents: read
 
